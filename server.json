@@ -1,0 +1,33 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "eu.ansvar/polish-financial-regulation-mcp",
+  "description": "Query KNF rekomendacje, wytyczne, and stanowiska — provisions, enforcement actions, and sourcebook lookup",
+  "repository": {
+    "url": "https://github.com/Ansvar-Systems/polish-financial-regulation-mcp",
+    "source": "github"
+  },
+  "homepage": "https://ansvar.eu",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "keywords": [
+    "knf",
+    "polish-financial-regulation",
+    "komisja-nadzoru-finansowego",
+    "rekomendacje",
+    "wytyczne",
+    "compliance",
+    "enforcement",
+    "mcp",
+    "ansvar"
+  ],
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@ansvar/polish-financial-regulation-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
