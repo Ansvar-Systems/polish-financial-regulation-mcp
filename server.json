@@ -16,6 +16,8 @@
     "compliance",
     "mcp"
   ],
+  "coverage_type": "regulatory_publications",
+  "coverage_audit_cadence": "monthly",
   "packages": [
     {
       "registryType": "npm",
