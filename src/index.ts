@@ -15,7 +15,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
@@ -42,6 +42,15 @@ try {
 }
 
 const SERVER_NAME = "polish-financial-regulation-mcp";
+
+const RESPONSE_META = {
+  disclaimer:
+    "This information is provided for reference only and does not constitute legal advice. Always verify against the official KNF source at https://www.knf.gov.pl/.",
+  data_age:
+    "Data ingested from knf.gov.pl. Use pl_fin_check_data_freshness for last update timestamp.",
+  copyright: "© Komisja Nadzoru Finansowego (KNF). Source: knf.gov.pl",
+  source_url: "https://www.knf.gov.pl/",
+};
 
 const TOOLS = [
   {
@@ -149,6 +158,26 @@ const TOOLS = [
       required: [],
     },
   },
+  {
+    name: "pl_fin_list_sources",
+    description:
+      "List all data sources used by this MCP server with URLs and descriptions. (Lista źródeł danych z adresami URL i opisami.)",
+    inputSchema: {
+      type: "object" as const,
+      properties: {},
+      required: [],
+    },
+  },
+  {
+    name: "pl_fin_check_data_freshness",
+    description:
+      "Check how recent the KNF regulation data in this MCP is. Returns last ingest timestamp and whether a refresh is recommended. (Sprawdza aktualność danych KNF.)",
+    inputSchema: {
+      type: "object" as const,
+      properties: {},
+      required: [],
+    },
+  },
 ];
 
 const SearchRegulationsArgs = z.object({
@@ -178,12 +207,18 @@ function textContent(data: unknown) {
     content: [
       { type: "text" as const, text: JSON.stringify(data, null, 2) },
     ],
+    _meta: RESPONSE_META,
   };
 }
 
-function errorContent(message: string) {
+function errorContent(message: string, errorType = "TOOL_ERROR") {
   return {
-    content: [{ type: "text" as const, text: message }],
+    content: [
+      {
+        type: "text" as const,
+        text: JSON.stringify({ error: message, _error_type: errorType, _meta: RESPONSE_META }, null, 2),
+      },
+    ],
     isError: true as const,
   };
 }
@@ -210,7 +245,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           status: parsed.status,
           limit: parsed.limit,
         });
-        return textContent({ results, count: results.length });
+        const resultsWithCitations = results.map((r) => ({
+          ...r,
+          _citation: buildCitation(
+            String(r.reference),
+            String(r.title ?? r.reference),
+            "pl_fin_get_regulation",
+            { sourcebook: String(r.sourcebook_id), reference: String(r.reference) },
+          ),
+        }));
+        return textContent({ results: resultsWithCitations, count: results.length });
       }
 
       case "pl_fin_get_regulation": {
@@ -245,7 +289,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           action_type: parsed.action_type,
           limit: parsed.limit,
         });
-        return textContent({ results, count: results.length });
+        const resultsWithCitations = results.map((r) => ({
+          ...r,
+          _citation: buildCitation(
+            String(r.reference_number),
+            String(r.firm_name ?? r.reference_number),
+            "pl_fin_get_regulation",
+            { sourcebook: "KNF_ENFORCEMENT", reference: String(r.reference_number) },
+          ),
+        }));
+        return textContent({ results: resultsWithCitations, count: results.length });
       }
 
       case "pl_fin_check_currency": {
@@ -265,12 +318,76 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         });
       }
 
+      case "pl_fin_list_sources": {
+        return textContent({
+          sources: [
+            {
+              id: "KNF_REKOMENDACJE",
+              name: "KNF Rekomendacje",
+              description:
+                "Recommendations (rekomendacje) issued by Komisja Nadzoru Finansowego for banks and other supervised financial institutions.",
+              url: "https://www.knf.gov.pl/regulacje_i_praktyka/regulacje_i_wytyczne/rekomendacje",
+              type: "regulatory_publications",
+            },
+            {
+              id: "KNF_WYTYCZNE",
+              name: "KNF Wytyczne",
+              description:
+                "Guidelines (wytyczne) issued by KNF for financial sector participants on operational, IT, and compliance matters.",
+              url: "https://www.knf.gov.pl/regulacje_i_praktyka/regulacje_i_wytyczne/wytyczne",
+              type: "regulatory_publications",
+            },
+            {
+              id: "KNF_STANOWISKA",
+              name: "KNF Stanowiska",
+              description:
+                "Official positions (stanowiska) and statements issued by KNF on regulatory interpretation and supervisory expectations.",
+              url: "https://www.knf.gov.pl/regulacje_i_praktyka/regulacje_i_wytyczne/stanowiska",
+              type: "regulatory_publications",
+            },
+          ],
+          count: 3,
+          authority: "Komisja Nadzoru Finansowego (KNF)",
+          authority_url: "https://www.knf.gov.pl/",
+        });
+      }
+
+      case "pl_fin_check_data_freshness": {
+        const statePath = join(__dirname, "..", "data", "ingest-state.json");
+        let lastModified: string | null = null;
+        let processedUrlCount = 0;
+        try {
+          const stat = statSync(statePath);
+          lastModified = stat.mtime.toISOString();
+          const state = JSON.parse(readFileSync(statePath, "utf8")) as {
+            processedUrls?: string[];
+          };
+          processedUrlCount = state.processedUrls?.length ?? 0;
+        } catch {
+          // state file may not exist
+        }
+        const now = new Date();
+        const lastDate = lastModified ? new Date(lastModified) : null;
+        const daysSince = lastDate
+          ? Math.floor((now.getTime() - lastDate.getTime()) / 86_400_000)
+          : null;
+        return textContent({
+          last_ingest: lastModified,
+          days_since_ingest: daysSince,
+          processed_urls: processedUrlCount,
+          refresh_recommended: daysSince === null || daysSince > 30,
+          coverage_type: "regulatory_publications",
+          audit_cadence: "monthly",
+          source: "https://www.knf.gov.pl/",
+        });
+      }
+
       default:
-        return errorContent(`Unknown tool: ${name}`);
+        return errorContent(`Unknown tool: ${name}`, "UNKNOWN_TOOL");
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return errorContent(`Error executing ${name}: ${message}`);
+    return errorContent(`Error executing ${name}: ${message}`, "VALIDATION_ERROR");
   }
 });
 
