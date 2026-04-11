@@ -1,0 +1,35 @@
+{
+  "coverage_type": "regulatory_publications",
+  "coverage_audit_cadence": "monthly",
+  "jurisdiction": "PL",
+  "authority": "Komisja Nadzoru Finansowego (KNF)",
+  "authority_url": "https://www.knf.gov.pl/",
+  "sourcebooks": [
+    {
+      "id": "KNF_REKOMENDACJE",
+      "name": "KNF Rekomendacje",
+      "description": "Recommendations issued by KNF for banks and other supervised financial institutions.",
+      "url": "https://www.knf.gov.pl/regulacje_i_praktyka/regulacje_i_wytyczne/rekomendacje",
+      "type": "regulatory_publications"
+    },
+    {
+      "id": "KNF_WYTYCZNE",
+      "name": "KNF Wytyczne",
+      "description": "Guidelines issued by KNF for financial sector participants on operational, IT, and compliance matters.",
+      "url": "https://www.knf.gov.pl/regulacje_i_praktyka/regulacje_i_wytyczne/wytyczne",
+      "type": "regulatory_publications"
+    },
+    {
+      "id": "KNF_STANOWISKA",
+      "name": "KNF Stanowiska",
+      "description": "Official positions and statements issued by KNF on regulatory interpretation.",
+      "url": "https://www.knf.gov.pl/regulacje_i_praktyka/regulacje_i_wytyczne/stanowiska",
+      "type": "regulatory_publications"
+    }
+  ],
+  "out_of_scope": [
+    "EU-level regulations (MiFID II, CRD, Solvency II)",
+    "Polish primary legislation",
+    "KNF press releases and non-regulatory publications"
+  ]
+}
