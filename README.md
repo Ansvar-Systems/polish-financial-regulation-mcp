@@ -1,235 +1,87 @@
 # Polish Financial Regulation MCP
 
-**Polish financial regulation data for AI compliance tools.**
+MCP server for KNF (Polish Financial Supervision Authority) financial regulations
 
-[![npm version](https://badge.fury.io/js/%40ansvar%2Fpolish-financial-regulation-mcp.svg)](https://www.npmjs.com/package/@ansvar/polish-financial-regulation-mcp)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![CI](https://github.com/Ansvar-Systems/polish-financial-regulation-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Ansvar-Systems/polish-financial-regulation-mcp/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![MCP](https://img.shields.io/badge/MCP-spec--compliant-green.svg)](https://modelcontextprotocol.io)
 
-Query Polish financial regulation data -- regulations, decisions, and requirements from KNF (Polish Financial Supervision Authority) -- directly from Claude, Cursor, or any MCP-compatible client.
+## What this is
 
-Built by [Ansvar Systems](https://ansvar.eu) -- Stockholm, Sweden
+MCP server for KNF (Polish Financial Supervision Authority) financial regulations
 
----
+Part of the Ansvar MCP fleet — source-available servers published for self-hosting.
 
-## Quick Start
+## Two ways to use it
 
-### Use Remotely (No Install Needed)
+**Self-host (free, Apache 2.0)** — clone this repo, run the ingestion script to build your local database from the listed upstream sources, point your MCP client at the local server. Instructions below.
 
-> Connect directly to the hosted version -- zero dependencies, nothing to install.
+**Trial the hosted gateway (paid pilot, B2B)** — for production use against
+the curated, kept-fresh corpus across the full Ansvar MCP fleet at once, with
+citation enrichment, multi-jurisdiction fan-out, and audit-ledgered query
+logs, see [ansvar.eu](https://ansvar.eu).
 
-**Endpoint:** `https://mcp.ansvar.eu/polish-financial-regulation/mcp`
+## Self-hosting
 
-| Client | How to Connect |
-|--------|---------------|
-| **Claude.ai** | Settings > Connectors > Add Integration > paste URL |
-| **Claude Code** | `claude mcp add polish-financial-regulation-mcp --transport http https://mcp.ansvar.eu/polish-financial-regulation/mcp` |
-| **Claude Desktop** | Add to config (see below) |
-| **GitHub Copilot** | Add to VS Code settings (see below) |
-
-**Claude Desktop** -- add to `claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "polish-financial-regulation-mcp": {
-      "type": "url",
-      "url": "https://mcp.ansvar.eu/polish-financial-regulation/mcp"
-    }
-  }
-}
-```
-
-**GitHub Copilot** -- add to VS Code `settings.json`:
-
-```json
-{
-  "github.copilot.chat.mcp.servers": {
-    "polish-financial-regulation-mcp": {
-      "type": "http",
-      "url": "https://mcp.ansvar.eu/polish-financial-regulation/mcp"
-    }
-  }
-}
-```
-
-### Use Locally (npm)
+### Install
 
 ```bash
-npx @ansvar/polish-financial-regulation-mcp
-```
-
-**Claude Desktop** -- add to `claude_desktop_config.json`:
-
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "polish-financial-regulation-mcp": {
-      "command": "npx",
-      "args": ["-y", "@ansvar/polish-financial-regulation-mcp"]
-    }
-  }
-}
-```
-
-**Cursor / VS Code:**
-
-```json
-{
-  "mcp.servers": {
-    "polish-financial-regulation-mcp": {
-      "command": "npx",
-      "args": ["-y", "@ansvar/polish-financial-regulation-mcp"]
-    }
-  }
-}
-```
-
----
-
-## Available Tools (6)
-
-| Tool | Description |
-|------|-------------|
-| `pl_fin_search_regulations` | Wyszukiwanie pełnotekstowe w rekomendacjach, wytycznych i stanowiskach KNF. Zwraca pasujące przepisy Komisji Nadzoru ... |
-| `pl_fin_get_regulation` | Pobiera konkretny przepis KNF według sourcebooka i referencji. Accepts references like |
-| `pl_fin_list_sourcebooks` | Lista wszystkich sourcebooków KNF z nazwami i opisami. (List all KNF sourcebooks with names and descriptions.) |
-| `pl_fin_search_enforcement` | Wyszukiwanie decyzji administracyjnych KNF — kary, cofnięcia zezwoleń, zakazy. (Search KNF enforcement actions — fine... |
-| `pl_fin_check_currency` | Sprawdza, czy konkretna referencja przepisu KNF jest aktualnie w mocy. (Check whether a specific KNF provision refere... |
-| `pl_fin_about` | Return metadata about this MCP server: version, data source, tool list. |
-
-All tools return structured data with source references and timestamps.
-
----
-
-## Data Sources and Freshness
-
-All content is sourced from official Polish regulatory publications:
-
-- **KNF (Polish Financial Supervision Authority)** -- Official regulatory authority
-
-### Data Currency
-
-- Database updates are periodic and may lag official publications
-- Freshness checks run via GitHub Actions workflows
-- Last-updated timestamps in tool responses indicate data age
-
-See `sources.yml` for full provenance metadata.
-
----
-
-## Security
-
-This project uses multiple layers of automated security scanning:
-
-| Scanner | What It Does | Schedule |
-|---------|-------------|----------|
-| **CodeQL** | Static analysis for security vulnerabilities | Weekly + PRs |
-| **Semgrep** | SAST scanning (OWASP top 10, secrets, TypeScript) | Every push |
-| **Gitleaks** | Secret detection across git history | Every push |
-| **Trivy** | CVE scanning on filesystem and npm dependencies | Daily |
-| **Docker Security** | Container image scanning + SBOM generation | Daily |
-| **Socket.dev** | Supply chain attack detection | PRs |
-| **Dependabot** | Automated dependency updates | Weekly |
-
-See [SECURITY.md](SECURITY.md) for the full policy and vulnerability reporting.
-
----
-
-## Important Disclaimers
-
-### Not Regulatory Advice
-
-> **THIS TOOL IS NOT REGULATORY OR LEGAL ADVICE**
->
-> Regulatory data is sourced from official publications by KNF (Polish Financial Supervision Authority). However:
-> - This is a **research tool**, not a substitute for professional regulatory counsel
-> - **Verify all references** against primary sources before making compliance decisions
-> - **Coverage may be incomplete** -- do not rely solely on this for regulatory research
-
-**Before using professionally, read:** [DISCLAIMER.md](DISCLAIMER.md) | [PRIVACY.md](PRIVACY.md)
-
-### Confidentiality
-
-Queries go through the Claude API. For privileged or confidential matters, use on-premise deployment. See [PRIVACY.md](PRIVACY.md) for details.
-
----
-
-## Development
-
-### Setup
-
-```bash
-git clone https://github.com/Ansvar-Systems/polish-financial-regulation-mcp
+git clone https://github.com/Ansvar-Systems/polish-financial-regulation-mcp.git
 cd polish-financial-regulation-mcp
 npm install
+```
+
+### Build
+
+```bash
 npm run build
-npm test
 ```
 
-### Running Locally
+### Build the database
 
 ```bash
-npm run dev                                       # Start MCP server
-npx @anthropic/mcp-inspector node dist/index.js   # Test with MCP Inspector
+npm run ingest
 ```
 
-### Data Management
+Ingestion fetches from the upstream source(s) listed under **Sources** below and builds a local SQLite database. Re-run periodically to refresh. Review the source's published terms before running ingestion in a commercial deployment, and inspect the ingestion script in this repo for the actual access method (open API, bulk download, HTML scrape, or feed).
 
-```bash
-npm run build:db       # Rebuild SQLite database from seed data
-npm run check-updates  # Check for new regulatory data
+### Configure your MCP client
+
+```json
+{
+  "mcpServers": {
+    "polish-financial-regulation-mcp": {
+      "command": "node",
+      "args": ["dist/src/index.js"]
+    }
+  }
+}
 ```
 
----
+## Sources
 
-## Related Projects
+| Source | Source URL | Terms / license URL | License basis | Attribution required | Commercial use | Redistribution / caching | Notes |
+|---|---|---|---|---|---|---|---|
+| _Source not yet recorded_ | _N/A_ | _N/A_ | Unverified — confirm with the upstream provider before reuse | Unverified | Unverified | Unverified | This MCP's ingestion script downloads from one or more upstream sources whose terms have not been recorded here. Self-hosters must inspect the ingestion script and confirm the rights basis for each source before commercial use. |
 
-This server is part of **Ansvar's MCP fleet** -- 276 MCP servers covering law, regulation, and compliance across 119 jurisdictions.
 
-### Law MCPs
+## What this repository does not provide
 
-Full national legislation for 108 countries. Example: [@ansvar/swedish-law-mcp](https://github.com/Ansvar-Systems/swedish-law-mcp) -- 2,415 Swedish statutes with EU cross-references.
+This repository's source — the MCP server code, schema, and ingestion script — is licensed under Apache
+2.0. The license below covers the code in this repository only; it does not
+extend to upstream materials. Pre-built database snapshots under `data/` (e.g. `knf.db`) are shipped as a transitional convenience while the build pipeline is migrated to mount the corpus from a separate volume; they are scheduled for removal in a Phase 2 release. Their presence does not change the legal positioning above — running ingestion is still the canonical way to build a fresh corpus from upstream sources.
 
-### Sector Regulator MCPs
-
-National regulatory authority data for 29 EU/EFTA countries across financial regulation, data protection, cybersecurity, and competition. This MCP is one of 116 sector regulator servers.
-
-### Domain MCPs
-
-Specialized compliance domains: [EU Regulations](https://github.com/Ansvar-Systems/EU_compliance_MCP), [Security Frameworks](https://github.com/Ansvar-Systems/security-frameworks-mcp), [Automotive Cybersecurity](https://github.com/Ansvar-Systems/Automotive-MCP), [OT/ICS Security](https://github.com/Ansvar-Systems/ot-security-mcp), [Sanctions](https://github.com/Ansvar-Systems/Sanctions-MCP), and more.
-
-Browse the full fleet at [mcp.ansvar.eu](https://mcp.ansvar.eu).
-
----
-
-## Contributing
-
-Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
----
+Running ingestion may download, cache, transform, and index materials from the listed upstream sources. You are responsible for confirming that your use of those materials complies with the source terms, attribution requirements, robots/rate limits, database rights, copyright rules, and any commercial-use or redistribution limits that apply in your jurisdiction.
 
 ## License
 
-Apache License 2.0. See [LICENSE](./LICENSE) for details.
+Apache 2.0 — see [LICENSE](LICENSE). Commercial use, modification, and
+redistribution of **the source code in this repository** are permitted under
+that license. The license does not extend to upstream materials downloaded by the ingestion script; those remain governed by their respective source terms listed above.
 
-### Data Licenses
+## The Ansvar gateway
 
-Regulatory data sourced from official government publications. See `sources.yml` for per-source licensing details.
-
----
-
-## About Ansvar Systems
-
-We build AI-powered compliance and legal research tools for the European market. Our MCP fleet provides structured, verified regulatory data to AI assistants -- so compliance professionals can work with accurate sources instead of guessing.
-
-**[ansvar.eu](https://ansvar.eu)** -- Stockholm, Sweden
-
----
-
-<p align="center">
-  <sub>Built with care in Stockholm, Sweden</sub>
-</p>
+If you'd rather not self-host, [ansvar.eu](https://ansvar.eu) provides this
+MCP plus the full Ansvar fleet through a single OAuth-authenticated endpoint,
+with the curated production corpus, multi-MCP query orchestration, citation
+enrichment, and (on the company tier) a per-tenant cryptographic audit
+ledger. Pilot mode, B2B only.
