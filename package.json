@@ -2,7 +2,7 @@
   "name": "@ansvar/polish-financial-regulation-mcp",
   "version": "0.1.0",
   "mcpName": "eu.ansvar/polish-financial-regulation-mcp",
-  "description": "Komisja Nadzoru Finansowego (KNF) — Polish Financial Supervision Authority rekomendacje, wytyczne, and stanowiska MCP server",
+  "description": "Komisja Nadzoru Finansowego (KNF) \u2014 Polish Financial Supervision Authority rekomendacje, wytyczne, and stanowiska MCP server",
   "type": "module",
   "main": "dist/src/index.js",
   "bin": {
