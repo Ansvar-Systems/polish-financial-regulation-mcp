@@ -61,8 +61,7 @@ Ingestion fetches from the upstream source(s) listed under **Sources** below and
 
 | Source | Source URL | Terms / license URL | License basis | Attribution required | Commercial use | Redistribution / caching | Notes |
 |---|---|---|---|---|---|---|---|
-| _Source not yet recorded_ | _N/A_ | _N/A_ | Unverified — confirm with the upstream provider before reuse | Unverified | Unverified | Unverified | This MCP's ingestion script downloads from one or more upstream sources whose terms have not been recorded here. Self-hosters must inspect the ingestion script and confirm the rights basis for each source before commercial use. |
-
+| [KNF (Komisja Nadzoru Finansowego)](https://www.knf.gov.pl/) | https://www.knf.gov.pl/ | [Terms](https://www.knf.gov.pl/) | Public domain (statutes) — Polish Copyright Act (Ustawa o prawie autorskim) Art. 4 excludes legal acts (akty normatywne), official documents, and material published by state authorities from copyright; KNF does not publish a separate Creative Commons site licence | Yes | Conditional | Conditional | Scrapes k |
 
 ## What this repository does not provide
 
