@@ -221,7 +221,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             `Przepis nie znaleziony: ${parsed.sourcebook} ${parsed.reference}`,
           );
         }
-        const p = provision as Record<string, unknown>;
+        const p = provision as unknown as Record<string, unknown>;
         return textContent({
           ...p,
           _citation: buildCitation(
